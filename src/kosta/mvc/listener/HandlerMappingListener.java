@@ -23,7 +23,8 @@ public class HandlerMappingListener implements ServletContextListener {
     	String fileName = application.getInitParameter("fileName");
     	
     	Map<String , Controller>map = new HashMap<String, Controller>();
-    	
+    	Map<String, Class<?>> clzMap = new HashMap<String, Class<?>>();
+    	//?는 모든타입이 들어와도 된다는 개념
     	//미리 생성해야하는 객체에 대한 정보를 가지고 있는
     	//~.properties파일을 로딩하기
     	
@@ -34,8 +35,13 @@ public class HandlerMappingListener implements ServletContextListener {
     		//System.out.println(key+" = "+value);
     		//String 형태인  value를 객체로 만든다.
     		try {
-    			Controller controller = (Controller)Class.forName(value).newInstance();
+    			Class<?>cls = Class.forName(value);
+    			Controller controller=(Controller)cls.newInstance();
+    			//Controller controller = (Controller)Class.forName(value).newInstance();
+    			
     			map.put(key, controller);
+    			clzMap.put(key,cls);
+    			
     			System.out.println(key + " = "+controller);
     		}catch(Exception ex) {
     			ex.printStackTrace();
@@ -43,7 +49,7 @@ public class HandlerMappingListener implements ServletContextListener {
     	}
     	
     	application.setAttribute("map", map);//application영역에 저장
-    	
+    	application.setAttribute("clzMap", clzMap);
    }
     
     public void contextDestroyed(ServletContextEvent sce)  { 
